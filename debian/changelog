@@ -1,0 +1,5 @@
+device-manager-plugin-emul (0.0.1-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Dohyung Hong <don.hong@samsung.com>  Tue, 10 Apr 2012 20:06:04 +0900
