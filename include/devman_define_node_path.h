@@ -1,28 +1,16 @@
-/*
-Copyright 2012  Samsung Electronics Co., Ltd
-
-Licensed under the Flora License, Version 1.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.tizenopensource.org/license
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 #ifndef __DEVMAN_DEFINE_NODE_PATH_H
 #define __DEVMAN_DEFINE_NODE_PATH_H
 
 #define BACKLIGHT_PATH "/sys/class/backlight/"
+#define BACKLIGHT_MIN_BRIGHTNESS_PATH	BACKLIGHT_PATH"%s/min_brightness"
 #define BACKLIGHT_MAX_BRIGHTNESS_PATH	BACKLIGHT_PATH"%s/max_brightness"
 #define BACKLIGHT_BRIGHTNESS_PATH 	BACKLIGHT_PATH"%s/brightness"
+#define BACKLIGHT_DIMMING_PATH	BACKLIGHT_PATH"%s/dimming"
 #define LCD_PATH  "/sys/class/lcd/"
 #define LCD_ACL_CONTROL_PATH	LCD_PATH"%s/acl_control"
 #define LCD_POWER_PATH			LCD_PATH"%s/lcd_power"
+
+//#define DISPLAY_FRAME_RATE_PATH	"/sys/devices/platform/maru-display/devfreq/maru-display/max_freq"
 
 #define UART_PATH			"/sys/devices/platform/uart-select/path"
 #define USB_PATH			"/sys/devices/platform/usb-switch/path"
@@ -45,7 +33,7 @@ limitations under the License.
 #define JACK_USB_ONLINE_PATH		"/sys/devices/platform/jack/usb_online"
 #define JACK_CRADLE_ONLINE_PATH		"/sys/devices/platform/jack/cradle_online"
 #define JACK_TVOUT_ONLINE_PATH		"/sys/devices/platform/jack/tvout_online"
-#define JACK_KEYBOARD_ONLINE_PATH		"/sys/devices/platform/jack/keyboard_online"
+#define JACK_KEYBOARD_ONLINE_PATH	"/sys/devices/platform/jack/keyboard_online"
 
 #define LEDS_TORCH_MAX_BRIGHTNESS_PATH	"/sys/class/leds/leds-torch/max_brightness"
 #define LEDS_TORCH_BRIGHTNESS_PATH	"/sys/class/leds/leds-torch/brightness"

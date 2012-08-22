@@ -1,17 +1,25 @@
 /*
-Copyright 2012  Samsung Electronics Co., Ltd
-
-Licensed under the Flora License, Version 1.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.tizenopensource.org/license
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+ *  device-manager-plugin-maru
+ *
+ * Copyright (c) 2000 - 2011 Samsung Electronics Co., Ltd. All rights reserved.
+ *
+ * Contact: Dohyung Hong <don.hong@samsung.com>
+ *
+ * Based on slp/pkgs/d/device-manager-plugin-c210/device_manager_plugin-c210.c
+ * Modified to support the maru board of emulator
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
 */
 
 #include <string.h>
@@ -103,6 +111,9 @@ struct display_info
 	char bl_name[MAX_NAME]; /* backlight name */
 	char lcd_name[MAX_NAME]; /* lcd name */
 };
+
+#define MAX_CANDELA_CRITERION	300
+#define PWR_SAVING_CANDELA_CRITERION	20
 
 /* FIXME:!! change to global_ctx */
 int lcd_index;
@@ -196,10 +207,12 @@ int OEM_sys_get_backlight_max_brightness(int index, int *value)
 	return ret;
 }
 
-int OEM_sys_get_backlight_brightness(int index, int *value)
+int OEM_sys_get_backlight_brightness(int index, int *value, int power_saving)
 {
 	int ret = -1;
 	char path[MAX_NAME+1];
+	int max_brightness;
+	int pwr_saving_offset;
 
 	if (index >= DISP_MAX) {
 		devmgr_log("supports %d display node", DISP_MAX);
@@ -208,23 +221,62 @@ int OEM_sys_get_backlight_brightness(int index, int *value)
 
 	snprintf(path, MAX_NAME, BACKLIGHT_BRIGHTNESS_PATH, disp_info[index].bl_name);
 	ret = sys_get_int(path, value);
-	devmgr_log("path[%s]value[%d]", path, *value);
+	devmgr_log("path[%s]value[%d]power_saving[%d]", path, *value, power_saving);
+
+	if (power_saving){
+		snprintf(path, MAX_NAME, BACKLIGHT_MAX_BRIGHTNESS_PATH, disp_info[index].bl_name);
+		ret = sys_get_int(path, &max_brightness);
+		if (ret)
+		{
+			devmgr_log("Can't read max_brightness node[%s]", path);
+			return ret;
+		}
+		pwr_saving_offset = (PWR_SAVING_CANDELA_CRITERION * max_brightness / MAX_CANDELA_CRITERION) + 0.5;
+
+		if (*value > max_brightness - pwr_saving_offset)
+			*value = max_brightness;
+		else
+			*value = *value + pwr_saving_offset;
+
+		devmgr_log("power_saving result[%d]", *value);
+	}
 
 	return ret;
 }
 
-int OEM_sys_set_backlight_brightness(int index, int value)
+int OEM_sys_set_backlight_brightness(int index, int value, int power_saving)
 {
 	int ret = -1;
 	char path[MAX_NAME+1];
+	int max_brightness;
+	int pwr_saving_offset;
 
 	if (index >= DISP_MAX) {
 		devmgr_log("supports %d display node", DISP_MAX);
 		return ret;
 	}
 
+	devmgr_log("path[%s]value[%d]power_saving[%d]", path, value, power_saving);
+
+	if (power_saving){
+		snprintf(path, MAX_NAME, BACKLIGHT_MAX_BRIGHTNESS_PATH, disp_info[index].bl_name);
+		ret = sys_get_int(path, &max_brightness);
+		if (ret)
+		{
+			devmgr_log("Can't read max_brightness node[%s]", path);
+			return ret;
+		}
+		pwr_saving_offset = (PWR_SAVING_CANDELA_CRITERION * max_brightness / MAX_CANDELA_CRITERION) + 0.5;
+
+		if (value < pwr_saving_offset)
+			value = 0;
+		else
+			value = value - pwr_saving_offset;
+
+		devmgr_log("power_saving result[%d]", value);
+	}
+
 	snprintf(path, MAX_NAME, BACKLIGHT_BRIGHTNESS_PATH, disp_info[index].bl_name);
-	devmgr_log("path[%s]value[%d]", path, value);
 	ret = sys_set_int(path, value);
 
 	return ret;
@@ -298,6 +350,40 @@ int OEM_sys_set_lcd_power(int index, int value)
 	return ret;
 }
 
+int OEM_sys_get_backlight_min_brightness(int index, int *value)
+{
+    int ret = -1;
+    char path[MAX_NAME+1];
+
+    if (index >= DISP_MAX) {
+        devmgr_log("supports %d display node", DISP_MAX);
+        return ret;
+    }
+
+    snprintf(path, MAX_NAME, BACKLIGHT_MIN_BRIGHTNESS_PATH, disp_info[index].bl_name);
+    ret = sys_get_int(path, value);
+    devmgr_log("path[%s]value[%d]", path, *value);
+
+    return ret;
+}
+
+int OEM_sys_set_backlight_dimming(int index, int value)
+{
+    int ret = -1;
+    char path[MAX_NAME+1];
+
+    if (index >= DISP_MAX) {
+        devmgr_log("supports %d display node", DISP_MAX);
+        return ret;
+    }
+
+    snprintf(path, MAX_NAME, BACKLIGHT_DIMMING_PATH, disp_info[index].lcd_name);
+    devmgr_log("path[%s]value[%d]", path, value);
+    ret = sys_set_int(path, value);
+
+    return ret;
+}
+
 /* image_enhance */
 int OEM_sys_get_image_enhance_save(void *image_enhance)
 {
@@ -369,6 +455,20 @@ int OEM_sys_set_image_enhance_tune(int value)
 {
 	int ret = -1;
 	return ret;
+}
+
+int OEM_sys_set_display_frame_rate(int value)
+{
+/*
+	if(value){
+		devmgr_log("Display frame rate limited to 40Hz");
+		return sys_set_str(DISPLAY_FRAME_RATE_PATH, "40");
+	}else{
+		devmgr_log("Display frame rate change 40Hz and 60Hz");
+		return sys_set_str(DISPLAY_FRAME_RATE_PATH, "60");
+	}
+*/
+	return -1;
 }
 
 GENERATE_ACCESSORS_INT_RW(haptic_vibetones_level, HAPTIC_VIBETONES_LEVEL_PATH)
@@ -469,6 +569,16 @@ int OEM_sys_set_usb_path(int value)
 	}
 
 	return -1;
+}
+
+int OEM_sys_get_battery_capacity_raw(int *value)
+{
+	return 0;
+}
+
+int OEM_sys_image_enhance_info(int *value)
+{
+	return 0;
 }
 
 GENERATE_ACCESSORS_INT_R(jack_charger_online, JACK_CHARGER_ONLINE_PATH)
@@ -683,6 +793,9 @@ static const OEM_sys_devman_plugin_interface devman_plugin_interface_emul = {
 
 	OEM_sys_get_image_enhance_tune,
 	OEM_sys_set_image_enhance_tune,
+	OEM_sys_image_enhance_info,
+
+	OEM_sys_set_display_frame_rate,
 
 	OEM_sys_get_uart_path,
 	OEM_sys_set_uart_path,
@@ -697,6 +810,7 @@ static const OEM_sys_devman_plugin_interface devman_plugin_interface_emul = {
 	OEM_sys_set_haptic_vibetones_oneshot,
 
 	OEM_sys_get_battery_capacity,
+	OEM_sys_get_battery_capacity_raw,
 	OEM_sys_get_battery_charge_full,
 	OEM_sys_get_battery_charge_now,
 	OEM_sys_get_battery_present,

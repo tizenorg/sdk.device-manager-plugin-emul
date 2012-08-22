@@ -3,7 +3,7 @@ PROJECT(slp_devman_plugin C)
 
 SET(SRCS
 	src/device_manager_io.c
-	src/device_manager_plugin_emul.c)
+	src/device_manager_plugin_maru.c)
 
 IF("${CMAKE_BUILD_TYPE}" STREQUAL "")
 	SET(CMAKE_BUILD_TYPE "Release")
