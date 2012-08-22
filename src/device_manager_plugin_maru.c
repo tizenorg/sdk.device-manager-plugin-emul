@@ -771,11 +771,16 @@ int set_usb_path(char *prop, int val);
 }
 #endif
 
+static OEM_sys_devman_plugin_interface devman_plugin_interface_emul;
+
+#if 0
 static const OEM_sys_devman_plugin_interface devman_plugin_interface_emul = {
 	OEM_sys_get_display_count,
+	OEM_sys_get_backlight_min_brightness,
 	OEM_sys_get_backlight_max_brightness,
 	OEM_sys_get_backlight_brightness,
 	OEM_sys_set_backlight_brightness,
+	OEM_sys_set_backlight_dimming
 	OEM_sys_get_backlight_acl_control,
 	OEM_sys_set_backlight_acl_control,
 
@@ -851,9 +856,92 @@ static const OEM_sys_devman_plugin_interface devman_plugin_interface_emul = {
 	OEM_sys_get_cpufreq_scaling_min_freq,
 	OEM_sys_set_cpufreq_scaling_min_freq
 };
+#endif
 
 EXPORT_API const OEM_sys_devman_plugin_interface *OEM_sys_get_devman_plugin_interface()
 {
+	devman_plugin_interface_emul.OEM_sys_get_display_count = &OEM_sys_get_display_count;
+	devman_plugin_interface_emul.OEM_sys_get_backlight_min_brightness = &OEM_sys_get_backlight_min_brightness;
+	devman_plugin_interface_emul.OEM_sys_get_backlight_max_brightness = &OEM_sys_get_backlight_max_brightness;
+	devman_plugin_interface_emul.OEM_sys_get_backlight_brightness = &OEM_sys_get_backlight_brightness;
+	devman_plugin_interface_emul.OEM_sys_set_backlight_brightness = &OEM_sys_set_backlight_brightness;
+	devman_plugin_interface_emul.OEM_sys_set_backlight_dimming = &OEM_sys_set_backlight_dimming;
+	devman_plugin_interface_emul.OEM_sys_get_backlight_acl_control = &OEM_sys_get_backlight_acl_control;
+	devman_plugin_interface_emul.OEM_sys_set_backlight_acl_control = &OEM_sys_set_backlight_acl_control;
+
+	devman_plugin_interface_emul.OEM_sys_get_lcd_power = &OEM_sys_get_lcd_power;
+	devman_plugin_interface_emul.OEM_sys_set_lcd_power = &OEM_sys_set_lcd_power;
+
+	devman_plugin_interface_emul.OEM_sys_get_image_enhance_mode = &OEM_sys_get_image_enhance_mode;
+	devman_plugin_interface_emul.OEM_sys_set_image_enhance_mode = &OEM_sys_set_image_enhance_mode;
+	devman_plugin_interface_emul.OEM_sys_get_image_enhance_scenario = &OEM_sys_get_image_enhance_scenario;
+	devman_plugin_interface_emul.OEM_sys_set_image_enhance_scenario = &OEM_sys_set_image_enhance_scenario;
+	devman_plugin_interface_emul.OEM_sys_get_image_enhance_tone = &OEM_sys_get_image_enhance_tone;
+	devman_plugin_interface_emul.OEM_sys_set_image_enhance_tone = &OEM_sys_set_image_enhance_tone;
+	devman_plugin_interface_emul.OEM_sys_get_image_enhance_outdoor = &OEM_sys_get_image_enhance_outdoor;
+	devman_plugin_interface_emul.OEM_sys_set_image_enhance_outdoor = &OEM_sys_set_image_enhance_outdoor;
+
+	devman_plugin_interface_emul.OEM_sys_get_image_enhance_tune = &OEM_sys_get_image_enhance_tune;
+	devman_plugin_interface_emul.OEM_sys_set_image_enhance_tune = &OEM_sys_set_image_enhance_tune;
+
+	devman_plugin_interface_emul.OEM_sys_image_enhance_info = &OEM_sys_image_enhance_info;
+
+	devman_plugin_interface_emul.OEM_sys_set_display_frame_rate = &OEM_sys_set_display_frame_rate;
+
+	devman_plugin_interface_emul.OEM_sys_get_uart_path = &OEM_sys_get_uart_path;
+	devman_plugin_interface_emul.OEM_sys_set_uart_path = &OEM_sys_set_uart_path;
+
+	devman_plugin_interface_emul.OEM_sys_get_usb_path = &OEM_sys_get_usb_path;
+	devman_plugin_interface_emul.OEM_sys_set_usb_path = &OEM_sys_set_usb_path;
+
+	devman_plugin_interface_emul.OEM_sys_get_haptic_vibetones_level_max = &OEM_sys_get_haptic_vibetones_level_max;
+	devman_plugin_interface_emul.OEM_sys_get_haptic_vibetones_level = &OEM_sys_get_haptic_vibetones_level;
+	devman_plugin_interface_emul.OEM_sys_set_haptic_vibetones_level = &OEM_sys_set_haptic_vibetones_level;
+	devman_plugin_interface_emul.OEM_sys_set_haptic_vibetones_enable = &OEM_sys_set_haptic_vibetones_enable;
+	devman_plugin_interface_emul.OEM_sys_set_haptic_vibetones_oneshot = &OEM_sys_set_haptic_vibetones_oneshot;
+
+	devman_plugin_interface_emul.OEM_sys_get_battery_capacity = &OEM_sys_get_battery_capacity;
+	devman_plugin_interface_emul.OEM_sys_get_battery_capacity_raw = &OEM_sys_get_battery_capacity_raw;
+	devman_plugin_interface_emul.OEM_sys_get_battery_charge_full = &OEM_sys_get_battery_charge_full;
+	devman_plugin_interface_emul.OEM_sys_get_battery_charge_now = &OEM_sys_get_battery_charge_now;
+	devman_plugin_interface_emul.OEM_sys_get_battery_present = &OEM_sys_get_battery_present;
+	devman_plugin_interface_emul.OEM_sys_get_battery_health = &OEM_sys_get_battery_health;
+
+	devman_plugin_interface_emul.OEM_sys_get_jack_charger_online = &OEM_sys_get_jack_charger_online;
+	devman_plugin_interface_emul.OEM_sys_get_jack_earjack_online = &OEM_sys_get_jack_earjack_online;
+	devman_plugin_interface_emul.OEM_sys_get_jack_earkey_online = &OEM_sys_get_jack_earkey_online;
+	devman_plugin_interface_emul.OEM_sys_get_jack_hdmi_online = &OEM_sys_get_jack_hdmi_online;
+	devman_plugin_interface_emul.OEM_sys_get_jack_usb_online = &OEM_sys_get_jack_usb_online;
+	devman_plugin_interface_emul.OEM_sys_get_jack_cradle_online = &OEM_sys_get_jack_cradle_online;
+	devman_plugin_interface_emul.OEM_sys_get_jack_tvout_online = &OEM_sys_get_jack_tvout_online;
+	devman_plugin_interface_emul.OEM_sys_get_jack_keyboard_online = &OEM_sys_get_jack_keyboard_online;
+
+	devman_plugin_interface_emul.OEM_sys_get_leds_torch_max_brightness = &OEM_sys_get_leds_torch_max_brightness;
+	devman_plugin_interface_emul.OEM_sys_get_leds_torch_brightness = &OEM_sys_get_leds_torch_brightness;
+	devman_plugin_interface_emul.OEM_sys_set_leds_torch_brightness = &OEM_sys_set_leds_torch_brightness;
+
+	devman_plugin_interface_emul.OEM_sys_set_power_state = &OEM_sys_set_power_state;
+
+	/* TODO: Should determine enum values of wakeup_count nodes */
+	devman_plugin_interface_emul.OEM_sys_get_power_wakeup_count = &OEM_sys_get_power_wakeup_count;
+	devman_plugin_interface_emul.OEM_sys_set_power_wakeup_count = &OEM_sys_set_power_wakeup_count;
+
+	devman_plugin_interface_emul.OEM_sys_get_memnotify_node = &OEM_sys_get_memnotify_node;
+	devman_plugin_interface_emul.OEM_sys_get_memnotify_victim_task = &OEM_sys_get_memnotify_victim_task;
+	devman_plugin_interface_emul.OEM_sys_set_memnotify_threshold_lv1 = &OEM_sys_set_memnotify_threshold_lv1;
+	devman_plugin_interface_emul.OEM_sys_set_memnotify_threshold_lv2 = &OEM_sys_set_memnotify_threshold_lv2;
+
+	devman_plugin_interface_emul.OEM_sys_get_process_monitor_node = &OEM_sys_get_process_monitor_node;
+	devman_plugin_interface_emul.OEM_sys_set_process_monitor_mp_pnp = &OEM_sys_set_process_monitor_mp_pnp;
+	devman_plugin_interface_emul.OEM_sys_set_process_monitor_mp_vip = &OEM_sys_set_process_monitor_mp_vip;
+
+	devman_plugin_interface_emul.OEM_sys_get_cpufreq_cpuinfo_max_freq = &OEM_sys_get_cpufreq_cpuinfo_max_freq;
+	devman_plugin_interface_emul.OEM_sys_get_cpufreq_cpuinfo_min_freq = &OEM_sys_get_cpufreq_cpuinfo_min_freq;
+	devman_plugin_interface_emul.OEM_sys_get_cpufreq_scaling_max_freq = &OEM_sys_get_cpufreq_scaling_max_freq;
+	devman_plugin_interface_emul.OEM_sys_set_cpufreq_scaling_max_freq = &OEM_sys_set_cpufreq_scaling_max_freq;
+	devman_plugin_interface_emul.OEM_sys_get_cpufreq_scaling_min_freq = &OEM_sys_get_cpufreq_scaling_min_freq;
+	devman_plugin_interface_emul.OEM_sys_set_cpufreq_scaling_min_freq = &OEM_sys_set_cpufreq_scaling_min_freq;
+
 	OEM_sys_display_info(disp_info);
 	return &devman_plugin_interface_emul;
 }
