@@ -369,6 +369,7 @@ int OEM_sys_get_backlight_min_brightness(int index, int *value)
 
 int OEM_sys_set_backlight_dimming(int index, int value)
 {
+    /*
     int ret = -1;
     char path[MAX_NAME+1];
 
@@ -380,8 +381,12 @@ int OEM_sys_set_backlight_dimming(int index, int value)
     snprintf(path, MAX_NAME, BACKLIGHT_DIMMING_PATH, disp_info[index].lcd_name);
     devmgr_log("path[%s]value[%d]", path, value);
     ret = sys_set_int(path, value);
-
     return ret;
+    */
+
+    // TODO : value is only 1
+    return OEM_sys_set_backlight_brightness(index, 1, 0/*power_saving*/);
+
 }
 
 /* image_enhance */
