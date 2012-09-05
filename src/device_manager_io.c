@@ -136,15 +136,16 @@ int sys_get_int(char *fname, int *val)
 	}
 }
 
-char *sys_get_str(char *fname)
+int sys_get_str(char *fname, char* str)
 {
-	char buf[BUFF_MAX];
-	char *r = NULL;
+	char buf[BUFF_MAX] = {0};
 
-	if (sys_read_buf(fname, buf) == 0)
-		r = strdup((char *)buf);
+	if (sys_read_buf(fname, buf) == 0) {
+		strncpy(str, buf, strlen(buf));
+		return 0;
+	}
 
-	return r;
+	return -1;
 }
 
 int sys_set_int(char *fname, int val)

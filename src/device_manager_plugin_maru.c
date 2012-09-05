@@ -35,10 +35,12 @@
 #define BUFF_MAX	255
 #define MAX_NAME 255
 
+// TODO : checking return value
+#if 0
 #define GENERATE_ACCESSORS_CHAR_RW(_suffix, _item)	\
-char *OEM_sys_get_##_suffix()			\
+char *OEM_sys_get_##_suffix(char* str)			\
 {						\
-	return sys_get_str(_item);	\
+	return sys_get_str(_item, str);	\
 }						\
 						\
 int OEM_sys_set_##_suffix(char *str)			\
@@ -47,9 +49,9 @@ int OEM_sys_set_##_suffix(char *str)			\
 }
 
 #define GENERATE_ACCESSORS_CHAR_R(_suffix, _item)	\
-char *OEM_sys_get_##_suffix()			\
+char *OEM_sys_get_##_suffix(char* str)			\
 {						\
-	return sys_get_str(_item);	\
+	return sys_get_str(_item, str);	\
 }
 
 #define GENERATE_ACCESSORS_CHAR_W(_suffix, _item)	\
@@ -57,6 +59,7 @@ int OEM_sys_set_##_suffix(char *str)			\
 {						\
 	return sys_set_str(_item, str);		\
 }
+#endif
 
 /* TODO: Add APIs has (char *) params */
 
@@ -493,11 +496,12 @@ static char *health_text[] = {
 
 int OEM_sys_get_battery_health(int *value)
 {
-	char *buf;
-	int i = 0;
+	char buf[BUFF_MAX] = {0};
+	int ret = 0;
+	int i 	= 0;
 
-	buf = sys_get_str(BATTERY_HEALTH_PATH);
-	if (NULL == buf) {
+	ret = sys_get_str(BATTERY_HEALTH_PATH, buf);
+	if (ret != 0) {
 		return -1;
 	}
 
@@ -520,10 +524,11 @@ int OEM_sys_get_battery_polling_required(int *value)
 
 int OEM_sys_get_uart_path(int *value)
 {
-	char *buf;
+	char buf[BUFF_MAX] = {0};
+	int ret = 0;
 
-	buf = sys_get_str(UART_PATH);
-	if (NULL == buf) {
+	ret = sys_get_str(UART_PATH, buf);
+	if (ret != 0) {
 		return -1;
 	}
 
@@ -553,10 +558,11 @@ int OEM_sys_set_uart_path(int value)
 
 int OEM_sys_get_usb_path(int *value)
 {
-	char *buf;
+	char buf[BUFF_MAX] = {0};
+	int ret = 0;
 
-	buf = sys_get_str(USB_PATH);
-	if (NULL == buf) {
+	ret = sys_get_str(USB_PATH, buf);
+	if (ret != 0) {
 		return -1;
 	}
 
