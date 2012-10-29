@@ -5,7 +5,6 @@ Release:    1
 Group:      TO_BE/FILLED_IN
 License:    TO_BE/FILLED_IN
 Source0:    %{name}-%{version}.tar.gz
-ExclusiveArch: %{ix86}
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires:  cmake
