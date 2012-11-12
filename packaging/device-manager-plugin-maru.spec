@@ -1,6 +1,6 @@
 Name:       device-manager-plugin-maru
 Summary:    device-manager-plugin-maru
-Version: 0.0.10
+Version: 0.0.11
 Release:    1
 Group:      TO_BE/FILLED_IN
 License:    TO_BE/FILLED_IN

@@ -108,6 +108,7 @@ typedef struct {
 	int	(*OEM_sys_get_battery_present) (int *value);
 	int	(*OEM_sys_get_battery_health) (int *value);
     	int	(*OEM_sys_get_battery_polling_required) (int *value);
+	int	(*OEM_sys_get_battery_support_insuspend_charging) (int *value);
 
 	int	(*OEM_sys_get_jack_charger_online) (int *value);
 	int	(*OEM_sys_get_jack_earjack_online) (int *value);

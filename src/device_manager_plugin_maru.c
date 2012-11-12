@@ -522,6 +522,13 @@ int OEM_sys_get_battery_polling_required(int *value)
 	return 0;
 }
 
+int OEM_sys_get_battery_support_insuspend_charging(int *value)
+{
+	*value = 1;
+
+	return 0;
+}
+
 int OEM_sys_get_uart_path(int *value)
 {
 	char buf[BUFF_MAX] = {0};
@@ -925,6 +932,7 @@ EXPORT_API const OEM_sys_devman_plugin_interface *OEM_sys_get_devman_plugin_inte
 	devman_plugin_interface_emul.OEM_sys_get_battery_present = &OEM_sys_get_battery_present;
 	devman_plugin_interface_emul.OEM_sys_get_battery_health = &OEM_sys_get_battery_health;
     	devman_plugin_interface_emul.OEM_sys_get_battery_polling_required = &OEM_sys_get_battery_polling_required;
+	devman_plugin_interface_emul.OEM_sys_get_battery_support_insuspend_charging = &OEM_sys_get_battery_support_insuspend_charging;
 
 	devman_plugin_interface_emul.OEM_sys_get_jack_charger_online = &OEM_sys_get_jack_charger_online;
 	devman_plugin_interface_emul.OEM_sys_get_jack_earjack_online = &OEM_sys_get_jack_earjack_online;
