@@ -622,6 +622,13 @@ int OEM_sys_get_jack_keyboard_online(int *value)
 	return ret;
 }
 
+int OEM_sys_get_hdmi_support(int *value)
+{
+	*value = 1;
+
+	return 0;
+}
+
 GENERATE_ACCESSORS_INT_R(leds_torch_max_brightness, LEDS_TORCH_MAX_BRIGHTNESS_PATH)
 GENERATE_ACCESSORS_INT_RW(leds_torch_brightness, LEDS_TORCH_BRIGHTNESS_PATH)
 
@@ -942,6 +949,8 @@ EXPORT_API const OEM_sys_devman_plugin_interface *OEM_sys_get_devman_plugin_inte
 	devman_plugin_interface_emul.OEM_sys_get_jack_cradle_online = &OEM_sys_get_jack_cradle_online;
 	devman_plugin_interface_emul.OEM_sys_get_jack_tvout_online = &OEM_sys_get_jack_tvout_online;
 	devman_plugin_interface_emul.OEM_sys_get_jack_keyboard_online = &OEM_sys_get_jack_keyboard_online;
+
+	devman_plugin_interface_exynos.OEM_sys_get_hdmi_support = &OEM_sys_get_hdmi_support;
 
 	devman_plugin_interface_emul.OEM_sys_get_leds_torch_max_brightness = &OEM_sys_get_leds_torch_max_brightness;
 	devman_plugin_interface_emul.OEM_sys_get_leds_torch_brightness = &OEM_sys_get_leds_torch_brightness;

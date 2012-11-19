@@ -119,6 +119,8 @@ typedef struct {
 	int	(*OEM_sys_get_jack_tvout_online) (int *value);
 	int	(*OEM_sys_get_jack_keyboard_online) (int *value);
 
+	int     (*OEM_sys_get_hdmi_support) (int *value);
+
 	int	(*OEM_sys_get_leds_torch_max_brightness) (int *value);
 	int	(*OEM_sys_get_leds_torch_brightness) (int *value);
 	int	(*OEM_sys_set_leds_torch_brightness) (int value);
