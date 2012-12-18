@@ -39,6 +39,8 @@
 #define LEDS_TORCH_BRIGHTNESS_PATH	"/sys/class/leds/leds-torch/brightness"
 
 #define POWER_STATE_PATH		"/sys/power/state"
+#define POWER_UNLOCK_PATH		"/sys/power/wake_unlock"
+#define POWER_LOCK_PATH			"/sys/power/wake_lock"
 #define POWER_WAKEUP_COUNT_PATH		"/sys/power/wakeup_count"
 
 #define MEMNOTIFY_NODE			"/dev/memnotify"

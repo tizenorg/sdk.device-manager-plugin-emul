@@ -58,6 +58,11 @@ enum {
 	POWER_STATE_SUSPEND	= 0,
 };
 
+enum {
+	POWER_UNLOCK	= 0,
+	POWER_LOCK,
+};
+
 typedef struct {
 	int	(*OEM_sys_get_display_count) (int *value);
 
@@ -127,6 +132,8 @@ typedef struct {
 
 	/* TODO: Change args type */
 	int	(*OEM_sys_set_power_state) (int value);
+	int	(*OEM_sys_set_power_lock) (int value);
+	int	(*OEM_sys_get_power_lock_support)(int *value);
 
 	/* TODO: Should determine enum values of wakeup_count nodes */
 	int	(*OEM_sys_get_power_wakeup_count) (int *value);
