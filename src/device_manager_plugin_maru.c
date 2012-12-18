@@ -642,40 +642,6 @@ int OEM_sys_set_power_state(int value)
 	return -1;
 }
 
-int OEM_sys_set_power_lock(int value)
-{
-	static int power_lock_state=-1;
-
-	if(power_lock_state == value)
-		return -1;
-	else
-		power_lock_state = value;
-
-	switch (value) {
-	case POWER_UNLOCK:
-		return sys_set_str(POWER_UNLOCK_PATH, "mainlock");
-	case POWER_LOCK:
-		return sys_set_str(POWER_LOCK_PATH, "mainlock");
-	}
-
-	return 0;
-}
-
-int OEM_sys_get_power_lock_support(int *value)
-{
-	int err = -1;
-
-	err = sys_check_node(POWER_LOCK_PATH);
-	if (err == -1) {
-		devmgr_log("power lock node not found");
-		*value = 0;
-	}
-	else
-		*value = 1;
-
-	return 0;
-}
-
 GENERATE_ACCESSORS_INT_RW(power_wakeup_count, POWER_WAKEUP_COUNT_PATH)
 
 GENERATE_ACCESSORS_INT_W(memnotify_threshold_lv1, MEMNOTIFY_THRESHOLD_LV1_PATH)
@@ -991,8 +957,6 @@ EXPORT_API const OEM_sys_devman_plugin_interface *OEM_sys_get_devman_plugin_inte
 	devman_plugin_interface_emul.OEM_sys_set_leds_torch_brightness = &OEM_sys_set_leds_torch_brightness;
 
 	devman_plugin_interface_emul.OEM_sys_set_power_state = &OEM_sys_set_power_state;
-	devman_plugin_interface_emul.OEM_sys_set_power_lock = &OEM_sys_set_power_lock;
-	devman_plugin_interface_emul.OEM_sys_get_power_lock_support = &OEM_sys_get_power_lock_support;
 
 	/* TODO: Should determine enum values of wakeup_count nodes */
 	devman_plugin_interface_emul.OEM_sys_get_power_wakeup_count = &OEM_sys_get_power_wakeup_count;
