@@ -177,6 +177,8 @@ static int OEM_sys_display_info(struct display_info *disp_info)
 		devmgr_log("lcd_name[%s]", disp_info[i].lcd_name);
 
 	lcd_index = index;
+
+	return 0;
 }
 
 int OEM_sys_get_display_count(int *value)

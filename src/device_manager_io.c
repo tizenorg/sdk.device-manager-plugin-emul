@@ -92,15 +92,15 @@ static int sys_read_buf(char *file, char *buf)
 		return -ENOENT;
 	}
 
-	r = read(fd, buf, BUFF_MAX);
+	r = read(fd, buf, BUFF_MAX - 1);
 	if ((r >= 0) && (r < BUFF_MAX))
 		buf[r] = '\0';
 	else {
+		close(fd);
 		return -EIO;
 	}
 
 	close(fd);
-
 	return 0;
 }
 
