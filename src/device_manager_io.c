@@ -3,7 +3,9 @@
  *
  * Copyright (c) 2000 - 2011 Samsung Electronics Co., Ltd. All rights reserved.
  *
- * Contact: DongGi Jang <dg0402.jang@samsung.com>
+ * Contact:
+ *	jihye kim <jihye1128.kim@samsung.com>
+ *	SangJin Kim <sangjin3.kim@samsung.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

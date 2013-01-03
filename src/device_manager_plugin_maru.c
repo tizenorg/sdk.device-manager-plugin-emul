@@ -3,7 +3,9 @@
  *
  * Copyright (c) 2000 - 2011 Samsung Electronics Co., Ltd. All rights reserved.
  *
- * Contact: Dohyung Hong <don.hong@samsung.com>
+ * Contact:
+ *	jihye kim <jihye1128.kim@samsung.com>
+ *	SangJin Kim <sangjin3.kim@samsung.com>
  *
  * Based on slp/pkgs/d/device-manager-plugin-c210/device_manager_plugin-c210.c
  * Modified to support the maru board of emulator
