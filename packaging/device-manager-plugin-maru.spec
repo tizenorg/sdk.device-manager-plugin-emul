@@ -18,13 +18,12 @@ device-manager-plugin-maru.
 %setup -q
 
 %build
-export LDFLAGS+="-Wl,--rpath=%{_prefix}/lib -Wl,--as-needed"
-cmake . -DCMAKE_INSTALL_PREFIX=%{_prefix}
+export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--as-needed"
+%cmake .
 
 make 
 
 %install
-rm -rf %{buildroot}
 %make_install
 
 %post
