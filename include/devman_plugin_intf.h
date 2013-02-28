@@ -51,17 +51,26 @@ enum {
 
 enum {
 	POWER_STATE_SUSPEND	= 0,
+	POWER_STATE_PRE_SUSPEND,
+	POWER_STATE_POST_RESUME,
 };
+
+enum {
+        LUX_DECREMENT,
+        LUX_NOCHANGE,
+        LUX_INCREMENT,
+};
+
 
 typedef struct {
 	int	(*OEM_sys_get_display_count) (int *value);
 
-    int (*OEM_sys_get_backlight_min_brightness) (int index, int *value);
+    	int (*OEM_sys_get_backlight_min_brightness) (int index, int *value);
 	int	(*OEM_sys_get_backlight_max_brightness) (int index, int *value);
 	int	(*OEM_sys_get_backlight_brightness) (int index, int *value, int power_saving);
 	int	(*OEM_sys_set_backlight_brightness) (int index, int value, int power_saving);
 
-    int (*OEM_sys_set_backlight_dimming) (int index, int value);
+    	int (*OEM_sys_set_backlight_dimming) (int index, int value);
 
 	int	(*OEM_sys_get_backlight_acl_control) (int index, int *value);
 	int	(*OEM_sys_set_backlight_acl_control) (int index, int value);
@@ -89,6 +98,12 @@ typedef struct {
 
 	int	(*OEM_sys_get_usb_path) (int *value);
 	int	(*OEM_sys_set_usb_path) (int value);
+
+	int	(*OEM_sys_get_haptic_motor_level_max) (int *value);
+	int	(*OEM_sys_get_haptic_motor_level) (int *value);
+	int	(*OEM_sys_set_haptic_motor_level) (int value);
+	int	(*OEM_sys_set_haptic_motor_enable) (int value);
+	int	(*OEM_sys_set_haptic_motor_oneshot) (int value);
 
 	int	(*OEM_sys_get_haptic_vibetones_level_max) (int *value);
 	int	(*OEM_sys_get_haptic_vibetones_level) (int *value);
@@ -142,6 +157,8 @@ typedef struct {
 	int	(*OEM_sys_set_cpufreq_scaling_max_freq) (int value);
 	int	(*OEM_sys_get_cpufreq_scaling_min_freq) (int *value);
 	int	(*OEM_sys_set_cpufreq_scaling_min_freq) (int value);
+
+	int     (*OEM_sys_get_backlight_brightness_by_lux) (int lux, int status);
 } OEM_sys_devman_plugin_interface;
 
 const OEM_sys_devman_plugin_interface *OEM_sys_get_devman_plugin_interface();

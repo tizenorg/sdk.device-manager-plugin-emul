@@ -34,6 +34,19 @@
 #define SUCCESS		0
 #define	FAIL		1
 
+int sys_check_node(char *path)
+{
+	int fd = -1;
+
+	fd = open(path, O_RDONLY);
+
+	if (fd == -1)
+		return -1;
+
+	close(fd);
+	return 0;
+}
+
 int sys_get_node(char *path, char *node)
 {
 	if (0 >= snprintf(node, strlen(path) + 1, "%s", path))
