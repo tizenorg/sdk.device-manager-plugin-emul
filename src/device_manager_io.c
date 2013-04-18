@@ -1,23 +1,19 @@
 /*
- *  device-manager-plugin-maru
- *
- * Copyright (c) 2000 - 2011 Samsung Electronics Co., Ltd. All rights reserved.
- *
- * Contact: DongGi Jang <dg0402.jang@samsung.com>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
+* Copyright 2012  Samsung Electronics Co., Ltd
+*
+* Licensed under the Flora License, Version 1.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*   http://floralicense.org/license/
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
 */
+
 
 /*
  * 2012-03-05 Dohyung Hong <don.hong@samsung.com> Changed package name for the maru board of emulator
@@ -37,6 +33,19 @@
 #define BUFF_MAX	255
 #define SUCCESS		0
 #define	FAIL		1
+
+int sys_check_node(char *path)
+{
+	int fd = -1;
+
+	fd = open(path, O_RDONLY);
+
+	if (fd == -1)
+		return -1;
+
+	close(fd);
+	return 0;
+}
 
 int sys_get_node(char *path, char *node)
 {
