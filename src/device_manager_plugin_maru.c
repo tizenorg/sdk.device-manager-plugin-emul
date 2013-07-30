@@ -1,12 +1,9 @@
 /*
- *  device-manager-plugin-maru
+ * Copyright (C) 2011 - 2013 Samsung Electronics Co., Ltd. All rights reserved.
  *
- * Copyright (c) 2000 - 2011 Samsung Electronics Co., Ltd. All rights reserved.
- *
- * Contact: Dohyung Hong <don.hong@samsung.com>
- *
- * Based on slp/pkgs/d/device-manager-plugin-c210/device_manager_plugin-c210.c
- * Modified to support the maru board of emulator
+ * Contact:
+ * JiHye Kim <jihye1128.kim@samsung.com>
+ * YeongKyoon Lee <yeongkyoon.lee@samsung.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +16,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
-*/
+ */
+
 
 #include <string.h>
 #include <sys/types.h>
@@ -108,6 +105,12 @@ enum display_type
 	DISP_MAX
 };
 
+enum lux_status {
+	decrement,
+	no_change,
+	increment,
+};
+
 struct display_info
 {
 	enum display_type etype; /* FIXME:!! Main LCD or Sub LCD node */
@@ -121,6 +124,62 @@ struct display_info
 /* FIXME:!! change to global_ctx */
 int lcd_index;
 struct display_info disp_info[DISP_MAX];
+
+int OEM_sys_get_backlight_brightness_by_lux(unsigned int lux, enum lux_status status)
+{
+	static int brightness = -1;
+
+	if (status == no_change) {
+		if (brightness == -1)
+			status = increment;
+		else
+			return brightness;
+	}
+	if (status == decrement) {
+		switch (lux) {
+		case 10000 ... 0xffffffff:
+			brightness =  100;
+			break;
+		case 1000 ... 9999:
+			brightness =  80;
+			break;
+		case 75 ... 999:
+			brightness =  60;
+			break;
+		case 7 ... 74:
+			brightness =  40;
+			break;
+		case 0 ... 6:
+			brightness =  1;
+			break;
+		default:
+			return -1;
+		}
+	} else if (status == increment) {
+		switch (lux) {
+		case 15001 ... 0xffffffff:
+			brightness =  100;
+			break;
+		case 1501 ... 15000:
+			brightness =  80;
+			break;
+		case 151 ...  1500:
+			brightness =  60;
+			break;
+		case 16 ... 150:
+			brightness =  40;
+			break;
+		case 0 ... 15:
+			brightness =  1;
+			break;
+		default:
+			return -1;
+		}
+	} else
+		return -1;
+
+	return brightness;
+}
 
 static int OEM_sys_display_info(struct display_info *disp_info)
 {
@@ -177,6 +236,8 @@ static int OEM_sys_display_info(struct display_info *disp_info)
 		devmgr_log("lcd_name[%s]", disp_info[i].lcd_name);
 
 	lcd_index = index;
+
+	return 0;
 }
 
 int OEM_sys_get_display_count(int *value)
@@ -208,6 +269,23 @@ int OEM_sys_get_backlight_max_brightness(int index, int *value)
 	devmgr_log("path[%s]value[%d]", path, *value);
 
 	return ret;
+}
+
+int OEM_sys_get_backlight_min_brightness(int index, int *value)
+{
+    int ret = -1;
+    char path[MAX_NAME+1];
+
+    if (index >= DISP_MAX) {
+        devmgr_log("supports %d display node", DISP_MAX);
+        return ret;
+    }
+
+    snprintf(path, MAX_NAME, BACKLIGHT_MIN_BRIGHTNESS_PATH, disp_info[index].bl_name);
+    ret = sys_get_int(path, value);
+    devmgr_log("path[%s]value[%d]", path, *value);
+
+    return ret;
 }
 
 int OEM_sys_get_backlight_brightness(int index, int *value, int power_saving)
@@ -245,6 +323,28 @@ int OEM_sys_get_backlight_brightness(int index, int *value, int power_saving)
 	}
 
 	return ret;
+}
+
+int OEM_sys_set_backlight_dimming(int index, int value)
+{
+    /*
+    int ret = -1;
+    char path[MAX_NAME+1];
+
+    if (index >= DISP_MAX) {
+        devmgr_log("supports %d display node", DISP_MAX);
+        return ret;
+    }
+
+    snprintf(path, MAX_NAME, BACKLIGHT_DIMMING_PATH, disp_info[index].lcd_name);
+    devmgr_log("path[%s]value[%d]", path, value);
+    ret = sys_set_int(path, value);
+    return ret;
+    */
+
+    // TODO : value is only 1
+    return OEM_sys_set_backlight_brightness(index, 1, 0/*power_saving*/);
+
 }
 
 int OEM_sys_set_backlight_brightness(int index, int value, int power_saving)
@@ -353,45 +453,6 @@ int OEM_sys_set_lcd_power(int index, int value)
 	return ret;
 }
 
-int OEM_sys_get_backlight_min_brightness(int index, int *value)
-{
-    int ret = -1;
-    char path[MAX_NAME+1];
-
-    if (index >= DISP_MAX) {
-        devmgr_log("supports %d display node", DISP_MAX);
-        return ret;
-    }
-
-    snprintf(path, MAX_NAME, BACKLIGHT_MIN_BRIGHTNESS_PATH, disp_info[index].bl_name);
-    ret = sys_get_int(path, value);
-    devmgr_log("path[%s]value[%d]", path, *value);
-
-    return ret;
-}
-
-int OEM_sys_set_backlight_dimming(int index, int value)
-{
-    /*
-    int ret = -1;
-    char path[MAX_NAME+1];
-
-    if (index >= DISP_MAX) {
-        devmgr_log("supports %d display node", DISP_MAX);
-        return ret;
-    }
-
-    snprintf(path, MAX_NAME, BACKLIGHT_DIMMING_PATH, disp_info[index].lcd_name);
-    devmgr_log("path[%s]value[%d]", path, value);
-    ret = sys_set_int(path, value);
-    return ret;
-    */
-
-    // TODO : value is only 1
-    return OEM_sys_set_backlight_brightness(index, 1, 0/*power_saving*/);
-
-}
-
 /* image_enhance */
 int OEM_sys_get_image_enhance_save(void *image_enhance)
 {
@@ -465,6 +526,11 @@ int OEM_sys_set_image_enhance_tune(int value)
 	return ret;
 }
 
+int OEM_sys_image_enhance_info(int *value)
+{
+	return 0;
+}
+
 int OEM_sys_set_display_frame_rate(int value)
 {
 /*
@@ -488,6 +554,11 @@ GENERATE_ACCESSORS_INT_R(battery_capacity, BATTERY_CAPACITY_PATH)
 GENERATE_ACCESSORS_INT_R(battery_charge_full, BATTERY_CHARGE_FULL_PATH)
 GENERATE_ACCESSORS_INT_R(battery_charge_now, BATTERY_CHARGE_NOW_PATH)
 GENERATE_ACCESSORS_INT_R(battery_present, BATTERY_PRESENT_PATH)
+
+int OEM_sys_get_battery_capacity_raw(int *value)
+{
+	return 0;
+}
 
 static char *health_text[] = {
 	"Unknown", "Good", "Overheat", "Dead", "Over voltage",
@@ -522,12 +593,53 @@ int OEM_sys_get_battery_polling_required(int *value)
 	return 0;
 }
 
+int OEM_sys_get_battery_support_insuspend_charging(int *value)
+{
+	*value = 1;
+
+	return 0;
+}
+
+static char uart_node_path[MAX_NAME];
+static char usb_node_path[MAX_NAME];
+
+/* find uart/usb node path */
+static int OEM_sys_muic_node_path_info()
+{
+	int err = -1;
+
+	err = sys_check_node(UART_PATH);
+	if (!err)
+		sys_get_node(UART_PATH, uart_node_path);
+	else {
+		err = sys_check_node(UART_PATH_TRATS);
+		if (err) {
+			devmgr_log("uart path node not found");
+			return -1;
+		}
+		sys_get_node(UART_PATH_TRATS, uart_node_path);
+	}
+
+	err = sys_check_node(USB_PATH);
+	if (!err)
+		sys_get_node(USB_PATH, usb_node_path);
+	else {
+		err = sys_check_node(USB_PATH_TRATS);
+		if (err) {
+			devmgr_log("usb path node not found");
+			return -1;
+		}
+		sys_get_node(USB_PATH_TRATS, usb_node_path);
+	}
+	return 0;
+}
+
 int OEM_sys_get_uart_path(int *value)
 {
 	char buf[BUFF_MAX] = {0};
 	int ret = 0;
 
-	ret = sys_get_str(UART_PATH, buf);
+	ret = sys_get_str(uart_node_path, buf);
 	if (ret != 0) {
 		return -1;
 	}
@@ -547,9 +659,9 @@ int OEM_sys_set_uart_path(int value)
 {
 	switch (value) {
 	case PATH_CP:
-		return sys_set_str(UART_PATH, "CP");
+		return sys_set_str(uart_node_path, "CP");
 	case PATH_AP:
-		return sys_set_str(UART_PATH, "AP");
+		return sys_set_str(uart_node_path, "AP");
 	}
 
 	return -1;
@@ -561,15 +673,15 @@ int OEM_sys_get_usb_path(int *value)
 	char buf[BUFF_MAX] = {0};
 	int ret = 0;
 
-	ret = sys_get_str(USB_PATH, buf);
+	ret = sys_get_str(usb_node_path, buf);
 	if (ret != 0) {
 		return -1;
 	}
 
-	if (strncmp(buf, "AP", 2) == 0) {
+	if (strncmp(buf, "PDA", 3) == 0) {
 		*value = PATH_AP;
 		return 0;
-	} else if (strncmp(buf, "CP", 2) == 0) {
+	} else if (strncmp(buf, "MODEM", 5) == 0) {
 		*value = PATH_CP;
 		return 0;
 	}
@@ -581,22 +693,12 @@ int OEM_sys_set_usb_path(int value)
 {
 	switch (value) {
 	case PATH_CP:
-		return sys_set_str(USB_PATH, "CP");
+		return sys_set_str(usb_node_path, "MODEM");
 	case PATH_AP:
-		return sys_set_str(USB_PATH, "AP");
+		return sys_set_str(usb_node_path, "PDA");
 	}
 
 	return -1;
-}
-
-int OEM_sys_get_battery_capacity_raw(int *value)
-{
-	return 0;
-}
-
-int OEM_sys_image_enhance_info(int *value)
-{
-	return 0;
 }
 
 GENERATE_ACCESSORS_INT_R(jack_charger_online, JACK_CHARGER_ONLINE_PATH)
@@ -615,6 +717,13 @@ int OEM_sys_get_jack_keyboard_online(int *value)
 	return ret;
 }
 
+int OEM_sys_get_hdmi_support(int *value)
+{
+	*value = 1;
+
+	return 0;
+}
+
 GENERATE_ACCESSORS_INT_R(leds_torch_max_brightness, LEDS_TORCH_MAX_BRIGHTNESS_PATH)
 GENERATE_ACCESSORS_INT_RW(leds_torch_brightness, LEDS_TORCH_BRIGHTNESS_PATH)
 
@@ -623,6 +732,10 @@ int OEM_sys_set_power_state(int value)
 	switch (value) {
 	case POWER_STATE_SUSPEND:
 		return sys_set_str(POWER_STATE_PATH, "mem");
+	case POWER_STATE_PRE_SUSPEND:
+		return sys_set_str(POWER_STATE_PATH, "pre_suspend");
+	case POWER_STATE_POST_RESUME:
+		return sys_set_str(POWER_STATE_PATH, "post_resume");
 	}
 
 	return -1;
@@ -925,6 +1038,7 @@ EXPORT_API const OEM_sys_devman_plugin_interface *OEM_sys_get_devman_plugin_inte
 	devman_plugin_interface_emul.OEM_sys_get_battery_present = &OEM_sys_get_battery_present;
 	devman_plugin_interface_emul.OEM_sys_get_battery_health = &OEM_sys_get_battery_health;
     	devman_plugin_interface_emul.OEM_sys_get_battery_polling_required = &OEM_sys_get_battery_polling_required;
+	devman_plugin_interface_emul.OEM_sys_get_battery_support_insuspend_charging = &OEM_sys_get_battery_support_insuspend_charging;
 
 	devman_plugin_interface_emul.OEM_sys_get_jack_charger_online = &OEM_sys_get_jack_charger_online;
 	devman_plugin_interface_emul.OEM_sys_get_jack_earjack_online = &OEM_sys_get_jack_earjack_online;
@@ -934,6 +1048,8 @@ EXPORT_API const OEM_sys_devman_plugin_interface *OEM_sys_get_devman_plugin_inte
 	devman_plugin_interface_emul.OEM_sys_get_jack_cradle_online = &OEM_sys_get_jack_cradle_online;
 	devman_plugin_interface_emul.OEM_sys_get_jack_tvout_online = &OEM_sys_get_jack_tvout_online;
 	devman_plugin_interface_emul.OEM_sys_get_jack_keyboard_online = &OEM_sys_get_jack_keyboard_online;
+
+	devman_plugin_interface_emul.OEM_sys_get_hdmi_support = &OEM_sys_get_hdmi_support;
 
 	devman_plugin_interface_emul.OEM_sys_get_leds_torch_max_brightness = &OEM_sys_get_leds_torch_max_brightness;
 	devman_plugin_interface_emul.OEM_sys_get_leds_torch_brightness = &OEM_sys_get_leds_torch_brightness;
@@ -961,6 +1077,9 @@ EXPORT_API const OEM_sys_devman_plugin_interface *OEM_sys_get_devman_plugin_inte
 	devman_plugin_interface_emul.OEM_sys_get_cpufreq_scaling_min_freq = &OEM_sys_get_cpufreq_scaling_min_freq;
 	devman_plugin_interface_emul.OEM_sys_set_cpufreq_scaling_min_freq = &OEM_sys_set_cpufreq_scaling_min_freq;
 
+	devman_plugin_interface_emul.OEM_sys_get_backlight_brightness_by_lux = &OEM_sys_get_backlight_brightness_by_lux;
 	OEM_sys_display_info(disp_info);
+	OEM_sys_muic_node_path_info();
+
 	return &devman_plugin_interface_emul;
 }

@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2011 - 2013 Samsung Electronics Co., Ltd. All rights reserved.
+ *
+ * Contact:
+ * JiHye Kim <jihye1128.kim@samsung.com>
+ * YeongKyoon Lee <yeongkyoon.lee@samsung.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #ifndef __DEVMAN_DEFINE_NODE_PATH_H
 #define __DEVMAN_DEFINE_NODE_PATH_H
 
@@ -9,11 +29,18 @@
 #define LCD_PATH  "/sys/class/lcd/"
 #define LCD_ACL_CONTROL_PATH	LCD_PATH"%s/acl_control"
 #define LCD_POWER_PATH			LCD_PATH"%s/lcd_power"
+#define IMAGE_ENHANCE_PATH			"/sys/class/extension/mdnie/%s"
+#define IMAGE_ENHANCE_PATH_INFO			"/sys/class/extension/mdnie"
 
 //#define DISPLAY_FRAME_RATE_PATH	"/sys/devices/platform/maru-display/devfreq/maru-display/max_freq"
 
-#define UART_PATH			"/sys/devices/platform/uart-select/path"
-#define USB_PATH			"/sys/devices/platform/usb-switch/path"
+//#define UART_PATH			"/sys/devices/platform/uart-select/path"
+//#define USB_PATH			"/sys/devices/platform/usb-switch/path"
+
+#define UART_PATH			"/sys/devices/virtual/sec/switch/uart_sel"
+#define USB_PATH			"/sys/devices/virtual/sec/switch/usb_sel"
+#define UART_PATH_TRATS			"/sys/devices/platform/uart-select/path"
+#define USB_PATH_TRATS			"/sys/devices/platform/usb-select/path"
 
 #define HAPTIC_VIBETONES_LEVEL_PATH	"/sys/class/haptic/vibetones/level"
 #define HAPTIC_VIBETONES_LEVEL_MAX_PATH	"/sys/class/haptic/vibetones/level_max"
@@ -21,6 +48,7 @@
 #define HAPTIC_VIBETONES_ONESHOT_PATH	"/sys/class/haptic/vibetones/oneshot"
 
 #define BATTERY_CAPACITY_PATH		"/sys/class/power_supply/battery/capacity"
+#define BATTERY_CAPACITY_RAW_PATH	"/sys/class/power_supply/battery/capacity_raw"
 #define BATTERY_CHARGE_FULL_PATH	"/sys/class/power_supply/battery/charge_full"
 #define BATTERY_CHARGE_NOW_PATH		"/sys/class/power_supply/battery/charge_now"
 #define BATTERY_PRESENT_PATH		"/sys/class/power_supply/battery/present"
@@ -37,6 +65,8 @@
 
 #define LEDS_TORCH_MAX_BRIGHTNESS_PATH	"/sys/class/leds/leds-torch/max_brightness"
 #define LEDS_TORCH_BRIGHTNESS_PATH	"/sys/class/leds/leds-torch/brightness"
+//#define LEDS_TORCH_MAX_BRIGHTNESS_PATH	"/sys/class/camera/flash/max_brightness"
+//#define LEDS_TORCH_BRIGHTNESS_PATH	"/sys/class/camera/flash/rear_flash"
 
 #define POWER_STATE_PATH		"/sys/power/state"
 #define POWER_WAKEUP_COUNT_PATH		"/sys/power/wakeup_count"

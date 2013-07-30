@@ -1,11 +1,11 @@
 Name:       device-manager-plugin-maru
 Summary:    device-manager-plugin-maru
-Version: 0.0.9
+Version: 0.0.15
 Release:    1
 Group:      TO_BE/FILLED_IN
 License:    TO_BE/FILLED_IN
 Source0:    %{name}-%{version}.tar.gz
-ExclusiveArch: %{ix86}
+Source1001: packaging/device-manager-plugin-maru.manifest
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires:  cmake
@@ -18,13 +18,12 @@ device-manager-plugin-maru.
 %setup -q
 
 %build
-export LDFLAGS+="-Wl,--rpath=%{_prefix}/lib -Wl,--as-needed"
-cmake . -DCMAKE_INSTALL_PREFIX=%{_prefix}
+export LDFLAGS+="-Wl,--rpath=%{_libdir} -Wl,--as-needed"
+%cmake .
 
 make 
 
 %install
-rm -rf %{buildroot}
 %make_install
 
 %post

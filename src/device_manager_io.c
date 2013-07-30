@@ -1,9 +1,9 @@
 /*
- *  device-manager-plugin-maru
+ * Copyright (C) 2011 - 2013 Samsung Electronics Co., Ltd. All rights reserved.
  *
- * Copyright (c) 2000 - 2011 Samsung Electronics Co., Ltd. All rights reserved.
- *
- * Contact: DongGi Jang <dg0402.jang@samsung.com>
+ * Contact:
+ * JiHye Kim <jihye1128.kim@samsung.com>
+ * YeongKyoon Lee <yeongkyoon.lee@samsung.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
-*/
+ */
+
 
 /*
  * 2012-03-05 Dohyung Hong <don.hong@samsung.com> Changed package name for the maru board of emulator
@@ -37,6 +37,19 @@
 #define BUFF_MAX	255
 #define SUCCESS		0
 #define	FAIL		1
+
+int sys_check_node(char *path)
+{
+	int fd = -1;
+
+	fd = open(path, O_RDONLY);
+
+	if (fd == -1)
+		return -1;
+
+	close(fd);
+	return 0;
+}
 
 int sys_get_node(char *path, char *node)
 {
@@ -92,15 +105,15 @@ static int sys_read_buf(char *file, char *buf)
 		return -ENOENT;
 	}
 
-	r = read(fd, buf, BUFF_MAX);
+	r = read(fd, buf, BUFF_MAX - 1);
 	if ((r >= 0) && (r < BUFF_MAX))
 		buf[r] = '\0';
 	else {
+		close(fd);
 		return -EIO;
 	}
 
 	close(fd);
-
 	return 0;
 }
 
