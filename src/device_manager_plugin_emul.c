@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2011 - 2013 Samsung Electronics Co., Ltd. All rights reserved.
+ * Copyright (C) 2011 Samsung Electronics Co., Ltd. All rights reserved.
  *
  * Contact:
+ * Jinhyung Choi <jinhyung2.choi@samsung.com>
  * JiHye Kim <jihye1128.kim@samsung.com>
  * YeongKyoon Lee <yeongkyoon.lee@samsung.com>
  *
@@ -32,7 +33,6 @@
 #define BUFF_MAX	255
 #define MAX_NAME 255
 
-// TODO : checking return value
 #if 0
 #define GENERATE_ACCESSORS_CHAR_RW(_suffix, _item)	\
 char *OEM_sys_get_##_suffix(char* str)			\
@@ -89,11 +89,12 @@ GENERATE_ACCESSORS_INT_RW(backlight_brightness, BACKLIGHT_BRIGHTNESS_PATH)
 GENERATE_ACCESSORS_INT_RW(backlight_acl_control, LCD_ACL_CONTROL_PATH)
 GENERATE_ACCESSORS_INT_RW(lcd_power, LCD_POWER_PATH)
 */
+
+#define DEVMGR_LOG
 #if defined(DEVMGR_LOG)
-#define devmgr_log(fmt, args...) \
-	do { \
-		printf("%s:"fmt"\n", __func__, ##args); \
-	}while(0);
+#define LOG_TAG     "DEVICE_PLUGIN"
+#include <dlog/dlog.h>
+#define devmgr_log(fmt, args...)	SLOGD(fmt, ##args)
 #else
 #define devmgr_log(fmt, args...)
 #endif
@@ -202,7 +203,7 @@ static int OEM_sys_display_info(struct display_info *disp_info)
 			if (!strcmp(".", dent->d_name) || !strcmp("..", dent->d_name))
 				continue;
 			else {
-				strcpy(disp_info[index].bl_name, dent->d_name);
+				strncpy(disp_info[index].bl_name, dent->d_name, sizeof(disp_info[index].bl_name) - 1);
 				index++;
 			}
 		}
@@ -225,7 +226,7 @@ static int OEM_sys_display_info(struct display_info *disp_info)
 			if (!strcmp(".", dent->d_name) || !strcmp("..", dent->d_name))
 				continue;
 			else {
-				strcpy(disp_info[index].lcd_name, dent->d_name);
+				strncpy(disp_info[index].lcd_name, dent->d_name, sizeof(disp_info[index].lcd_name) - 1);
 				index++;
 			}
 		}
@@ -903,91 +904,6 @@ int set_usb_path(char *prop, int val);
 #endif
 
 static OEM_sys_devman_plugin_interface devman_plugin_interface_emul;
-
-#if 0
-static const OEM_sys_devman_plugin_interface devman_plugin_interface_emul = {
-	OEM_sys_get_display_count,
-	OEM_sys_get_backlight_min_brightness,
-	OEM_sys_get_backlight_max_brightness,
-	OEM_sys_get_backlight_brightness,
-	OEM_sys_set_backlight_brightness,
-	OEM_sys_set_backlight_dimming
-	OEM_sys_get_backlight_acl_control,
-	OEM_sys_set_backlight_acl_control,
-
-	OEM_sys_get_lcd_power,
-	OEM_sys_set_lcd_power,
-
-	OEM_sys_get_image_enhance_mode,
-	OEM_sys_set_image_enhance_mode,
-	OEM_sys_get_image_enhance_scenario,
-	OEM_sys_set_image_enhance_scenario,
-	OEM_sys_get_image_enhance_tone,
-	OEM_sys_set_image_enhance_tone,
-	OEM_sys_get_image_enhance_outdoor,
-	OEM_sys_set_image_enhance_outdoor,
-
-	OEM_sys_get_image_enhance_tune,
-	OEM_sys_set_image_enhance_tune,
-	OEM_sys_image_enhance_info,
-
-	OEM_sys_set_display_frame_rate,
-
-	OEM_sys_get_uart_path,
-	OEM_sys_set_uart_path,
-
-	OEM_sys_get_usb_path,
-	OEM_sys_set_usb_path,
-
-	OEM_sys_get_haptic_vibetones_level_max,
-	OEM_sys_get_haptic_vibetones_level,
-	OEM_sys_set_haptic_vibetones_level,
-	OEM_sys_set_haptic_vibetones_enable,
-	OEM_sys_set_haptic_vibetones_oneshot,
-
-	OEM_sys_get_battery_capacity,
-	OEM_sys_get_battery_capacity_raw,
-	OEM_sys_get_battery_charge_full,
-	OEM_sys_get_battery_charge_now,
-	OEM_sys_get_battery_present,
-	OEM_sys_get_battery_health,
-
-	OEM_sys_get_jack_charger_online,
-	OEM_sys_get_jack_earjack_online,
-	OEM_sys_get_jack_earkey_online,
-	OEM_sys_get_jack_hdmi_online,
-	OEM_sys_get_jack_usb_online,
-	OEM_sys_get_jack_cradle_online,
-	OEM_sys_get_jack_tvout_online,
-	OEM_sys_get_jack_keyboard_online,
-
-	OEM_sys_get_leds_torch_max_brightness,
-	OEM_sys_get_leds_torch_brightness,
-	OEM_sys_set_leds_torch_brightness,
-
-	OEM_sys_set_power_state,
-
-	/* TODO: Should determine enum values of wakeup_count nodes */
-	OEM_sys_get_power_wakeup_count,
-	OEM_sys_set_power_wakeup_count,
-
-	OEM_sys_get_memnotify_node,
-	OEM_sys_get_memnotify_victim_task,
-	OEM_sys_set_memnotify_threshold_lv1,
-	OEM_sys_set_memnotify_threshold_lv2,
-
-	OEM_sys_get_process_monitor_node,
-	OEM_sys_set_process_monitor_mp_pnp,
-	OEM_sys_set_process_monitor_mp_vip,
-
-	OEM_sys_get_cpufreq_cpuinfo_max_freq,
-	OEM_sys_get_cpufreq_cpuinfo_min_freq,
-	OEM_sys_get_cpufreq_scaling_max_freq,
-	OEM_sys_set_cpufreq_scaling_max_freq,
-	OEM_sys_get_cpufreq_scaling_min_freq,
-	OEM_sys_set_cpufreq_scaling_min_freq
-};
-#endif
 
 EXPORT_API const OEM_sys_devman_plugin_interface *OEM_sys_get_devman_plugin_interface()
 {
